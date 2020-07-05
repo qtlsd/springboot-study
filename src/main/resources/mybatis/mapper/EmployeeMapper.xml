@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.kuang.mapper.EmployeeMapper">
+    <select id="getAllEmployee" resultMap="empDept">
+        select e.id eid,e.lastName ename,e.email el,e.gender eg,d.departmentName dname,e.birth eb
+        from employee e,department d
+        where e.did=d.id;
+    </select>
+    <resultMap id="empDept" type="Employee">
+        <result property="id" column="eid"/>
+        <result property="lastName" column="ename"/>
+        <result property="email" column="el"/>
+        <result property="gender" column="eg"/>
+        <result property="birth" column="eb"/>
+        <association property="dept" javaType="Department">
+            <result property="departmentName" column="dname"/>
+        </association>
+    </resultMap>
+
+    <select id="getEmployeeById" resultMap="getempbyid">
+        select e.id eid,e.lastName ename,e.email el,e.gender eg,d.id did,d.departmentName dname,e.birth eb
+        from employee e,department d
+        where e.id=#{id} AND e.did=d.id;
+    </select>
+    <resultMap id="getempbyid" type="Employee">
+        <result property="id" column="eid"/>
+        <result property="lastName" column="ename"/>
+        <result property="email" column="el"/>
+        <result property="gender" column="eg"/>
+        <result property="birth" column="eb"/>
+        <association property="dept" javaType="Department">
+            <result property="id" column="did"/>
+            <result property="departmentName" column="dname"/>
+        </association>
+    </resultMap>
+
+    <insert id="insertEmp" parameterType="Employee">
+        insert into employee(id,lastName,email,gender,did,birth) values (#{id},#{lastName},#{email},#{gender},#{dept.id},#{birth})
+    </insert>
+
+    <update id="updateEmp" parameterType="Employee">
+        update employee set lastName=#{lastName},email=#{email},gender=#{gender},did=#{dept.id},birth=#{birth} where id=#{id}
+    </update>
+
+    <delete id="deleteEmp" parameterType="int">
+        delete from employee where id=#{id}
+    </delete>
+
+</mapper>
